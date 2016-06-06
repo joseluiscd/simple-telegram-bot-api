@@ -3,10 +3,9 @@ import re
 
 CANCEL_MSG="/cancel"
 
-class tgCommandBot(api.tgBot):
-	def __init__(self, token, bbdd_conn, webhook=True):
+class tgCommandBot(tgbotapi.TgBot):
+	def __init__(self, token, webhook=True):
 		super().__init__(token)
-		self.bbdd = bbdd.Bbdd(bbdd_conn)
 		self.me = self.getMe()
 		self.cmdregex = re.compile("^/(?P<command>[a-zA-Z0-9]+)(|\@(?P<bot>[a-zA-Z0-9]+))($| )")
 
@@ -55,11 +54,14 @@ class tgCommandBot(api.tgBot):
 
 		return decorator
 
-	def messageHandler(self, msgtype="text", chat_type="group", sudo=False, command=None, custom_fn=None):
+	def messageHandler(self, msgtype="text", group=True, private=True, sudo=False, command=None, custom_fn=None):
 		def fn_condition(bot, message):
-			if chat_type and message["chat"]["type"] != chat_type:
+			if (message["chat"]["type"]=="group" or message["chat"]["type"]=="group") and not group:
 				return False
-
+				
+			if message["chat"]["type"]=="private" and not private:
+				return False
+			
 			if sudo:
 				#You have to implement your superuser system.
 				return False

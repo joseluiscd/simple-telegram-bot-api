@@ -16,7 +16,7 @@ This is the way you work with it:
 
 
 
-Every method of tgBot objects have the same keyword arguments, and return the same things described in [the official API documentation](https://core.telegram.org/bots/api), as a python dict, list or combination of them.
+Every method of a tgBot object has the same keyword arguments, and return the same things described in [the official API documentation](https://core.telegram.org/bots/api), as a python dict, list or combination of them.
 
 In order to send a file, you have to use the special keyword argument "files". The key is the name of the parameter that the bot API requires (in sendDocument is "document, in sendPhoto is "photo"...).
 

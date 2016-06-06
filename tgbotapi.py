@@ -12,16 +12,13 @@ class TgBot:
 		
 	def call_method(self, method, files: dict=None, **data):
 		ret = requests.post(BOT_API_URL+self.token+"/"+method, data= data if data else None, files=files if files else None)
-		if ret.status_code==requests.codes.ok:
-			l = ret.json()
-			if l["ok"]:
-				return l["result"]
-			elif "description" in l:
-				raise TgException(l["description"])
-			else:
-				raise TgException("Error. Respuesta recibida: "+str(l))
+		l = ret.json()
+		if l["ok"]:
+			return l["result"]
+		elif "description" in l:
+			raise TgException(l["description"])
 		else:
-			ret.raise_for_status()
+			raise TgException("Error. Respuesta recibida: "+str(l))
 
 	def __getattr__(self, name):
 		return partial(self.call_method, name)
