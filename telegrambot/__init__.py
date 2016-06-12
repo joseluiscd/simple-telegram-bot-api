@@ -1,9 +1,7 @@
-import tgbotapi
+from . import tgbotapi
 import re
 
-CANCEL_MSG="/cancel"
-
-class tgCommandBot(tgbotapi.TgBot):
+class TgCommandBot(tgbotapi.TgApiConnection):
 	def __init__(self, token, webhook=True):
 		super().__init__(token)
 		self.me = self.getMe()
@@ -13,7 +11,11 @@ class tgCommandBot(tgbotapi.TgBot):
 	hooks_user = dict()
 	hooks_group = dict()
 
-	def proccessMessage(self, message):
+	def processUpdate(self, update):
+		if "message" in update:
+			return self.processMessage(update["message"])
+
+	def processMessage(self, message):
 		#Hooks
 		if message["chat"]["type"]=="private" and message["chat"]["id"] in self.hooks_user: # Hook para el usuario
 			if "text" in message and message["text"]=="/cancel":
@@ -48,6 +50,15 @@ class tgCommandBot(tgbotapi.TgBot):
 		else: #Todo un grupo
 			del(self.hooks_group["{0}-{1}".format(message["chat"]["id"], message["message_id"])])
 
+	def polling(self, timeout=20):
+		current_offset = 0
+		while True:
+			u = self.getUpdates(offset=current_offset, limit=1, timeout=timeout)
+			if u:
+				update = u[0]
+				current_offset = update["update_id"]+1
+				self.processUpdate(update)
+
 	def fMessageHandler(self, fn_condition):
 		def decorator(func):
 			self.handlers[fn_condition] = func
@@ -58,10 +69,10 @@ class tgCommandBot(tgbotapi.TgBot):
 		def fn_condition(bot, message):
 			if (message["chat"]["type"]=="group" or message["chat"]["type"]=="group") and not group:
 				return False
-				
+
 			if message["chat"]["type"]=="private" and not private:
 				return False
-			
+
 			if sudo:
 				#You have to implement your superuser system.
 				return False

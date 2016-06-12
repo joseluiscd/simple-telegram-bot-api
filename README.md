@@ -1,6 +1,11 @@
 # simple-telegram-bot-api
 Very simple (unofficial) wrapper for the Telegram Bot API (https://core.telegram.org/bots/api)
 
+There are two ways to use this library:
+- Importing tgbotapi.py, you get a basic telegram bot
+- Importing tgbot.py, you get support for commands and more things
+
+## Tgbotapi
 This is the way you work with it:
 
     import tgbotapi
@@ -22,7 +27,8 @@ In order to send a file, you have to use the special keyword argument "files". T
 
     bot.sendDocument(chat_id=1234567, files={"document": open("document.txt", "r")})
 
-There is a new module to create a bot which supports commands. Additional documentation will come soon.
+## Tgbot
+It implements the same things, but adds command and polling support. Additional documentation will come soon.
 
     import tgbot
 
