@@ -84,7 +84,7 @@ class TgCommandBot(tgbotapi.TgApiConnection):
 				match = self.cmdregex.match(message["text"])
 				if match:
 					grouped = match.groupdict()
-					if grouped["comando"]==command and (not grouped["bot"] or grouped["bot"]==self.me["username"]):
+					if grouped["command"]==command and (not grouped["bot"] or grouped["bot"]==self.me["username"]):
 						return match
 					else:
 						return False
