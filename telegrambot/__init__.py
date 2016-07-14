@@ -10,12 +10,33 @@ class TgCommandBot(tgbotapi.TgApiConnection):
 	handlers = dict()
 	hooks_user = dict()
 	hooks_group = dict()
+	middleware = list()
+
+	def runMiddleware(self, message):
+		for f in self.middleware:
+			print("Run", f)
+			ret = f(message)
+
+			if ret is False:
+				return
+			elif ret is not None:
+				message = ret
+
+		return message
+
+	def middlewareHandler(self, func):
+		print("New middleware")
+		self.middleware.append(func)
 
 	def processUpdate(self, update):
 		if "message" in update:
 			return self.processMessage(update["message"])
 
 	def processMessage(self, message):
+		message = self.runMiddleware(message)
+		if message is None:
+			return
+			
 		#Hooks
 		if message["chat"]["type"]=="private" and message["chat"]["id"] in self.hooks_user: # Hook para el usuario
 			if "text" in message and message["text"]=="/cancel":
