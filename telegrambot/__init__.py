@@ -9,7 +9,7 @@ class TgCommandBot(tgbotapi.TgApiConnection):
 			self.me = self.getMe()
 		except:
 			time.sleep(5)
-			
+
 		self.cmdregex = re.compile("^/(?P<command>[a-zA-Z0-9]+)(|\@(?P<bot>[a-zA-Z0-9]+))($| )")
 
 	handlers = dict()
@@ -116,8 +116,8 @@ class TgCommandBot(tgbotapi.TgApiConnection):
 			if message["chat"]["type"]=="private" and not private:
 				return False
 
-			if sudo:
-				#You have to implement your superuser system.
+			if sudo and not ("sudo" in message["from"] and message["from"]["sudo"]):
+				#Middleware is used as "sudo", you have to change message["from"] and add "sudo" as True
 				return False
 
 			if msgtype and not msgtype in message:
